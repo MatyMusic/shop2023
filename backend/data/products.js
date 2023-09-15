@@ -1,6 +1,5 @@
 const products = [
   {
-    _id: "1",
     name: "נר שעווה 1",
     image: "/images/(1).jpg",
     description: "נר שעווה 1",
@@ -12,7 +11,6 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: "2",
     name: "נר שעווה 2",
     image: "/images/(2).jpg",
     description: "נר שעווה 2",
@@ -24,7 +22,6 @@ const products = [
     numReviews: 8,
   },
   {
-    _id: "3",
     name: "נר שווה 3",
     image: "/images/(7).jpg",
     description: "נר שווה 3",
@@ -36,7 +33,6 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: "4",
     name: "נר שווה 4",
     image: "/images/(4).jpg",
     description: "נר שווה 4",
@@ -48,7 +44,6 @@ const products = [
     numReviews: 12,
   },
   {
-    _id: "5",
     name: "נר שווה 5",
     image: "/images/(5).jpg",
     description: "נר שווה 5",
@@ -60,7 +55,6 @@ const products = [
     numReviews: 10,
   },
   {
-    _id: "6",
     name: "נר שווה 6",
     image: "/images/(6).jpg",
     description: "נר שווה 6",
