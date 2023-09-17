@@ -1,5 +1,6 @@
 const products = [
   {
+    id: 1,
     name: "נר שעווה 1",
     image: "/images/(1).jpg",
     description: "נר שעווה 1",
@@ -11,6 +12,7 @@ const products = [
     numReviews: 12,
   },
   {
+    id: 2,
     name: "נר שעווה 2",
     image: "/images/(2).jpg",
     description: "נר שעווה 2",
