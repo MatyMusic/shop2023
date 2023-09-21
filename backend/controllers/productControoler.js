@@ -10,6 +10,8 @@ const getProducts = asyncHandler(async (req, res) => {
   const products = await Product.find({});
   res.json(products);
 });
+
+
 //?  description: Fetch single product
 //?   route  GET /api/product/:id
 //?  access Public

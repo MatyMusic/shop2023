@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import {
   Form,
@@ -9,14 +9,19 @@ import {
   Card,
   Button,
 } from "react-bootstrap";
+
 import Rating from "../components/Rating";
 import { useGetProductDetailsQuery } from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useState } from "react";
+import { addToCart } from "../slices/cartSlice";
+import { useDispatch } from "react-redux";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [qty, setQty] = useState(1);
 
   const {
@@ -25,7 +30,15 @@ const ProductScreen = () => {
     error,
   } = useGetProductDetailsQuery(productId);
 
-  console.log([...Array(product.countInStock).keys()]);
+  const addToCartHandler = () => {
+    dispatch(
+      addToCart({
+        ...product,
+        qty,
+      })
+    );
+    navigate("/cart");
+  };
 
   return (
     <>
@@ -91,7 +104,7 @@ const ProductScreen = () => {
 
                   {/*  */}
 
-                  {/* {product.countInStock > 0 && (
+                  {product.countInStock > 0 && (
                     <ListGroup.Item>
                       <Row>
                         <Col>כמות</Col>
@@ -101,20 +114,7 @@ const ProductScreen = () => {
                             value={qty}
                             onChange={(e) => setQty(Number(e.target.value))}
                           >
-                            {[...Array(product.countInStock).keys()]}
-                          </Form.Control> */}
-
-                  {product?.countInStock > 0 && (
-                    <ListGroup.Item>
-                      <Row>
-                        <Col>Qty</Col>
-                        <Col>
-                          <Form.Control
-                            as="select"
-                            value={qty}
-                            onChange={(e) => setQty(Number(e.target.value))}
-                          >
-                            {[...Array(product?.countInStock).keys()].map(
+                            {[...Array(product.countInStock).keys()].map(
                               (x) => (
                                 <option key={x + 1} value={x + 1}>
                                   {x + 1}
@@ -122,8 +122,6 @@ const ProductScreen = () => {
                               )
                             )}
                           </Form.Control>
-
-                          {/*  */}
                         </Col>
                       </Row>
                     </ListGroup.Item>
@@ -134,6 +132,7 @@ const ProductScreen = () => {
                       className="btn-block"
                       type="button"
                       disabled={product.countInStock === 0}
+                      onClick={addToCartHandler}
                     >
                       הוסף מוצר לעגלה
                     </Button>
