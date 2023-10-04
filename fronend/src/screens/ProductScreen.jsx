@@ -18,6 +18,7 @@ import { useState } from "react";
 import { addToCart } from "../slices/cartSlice";
 import { useDispatch } from "react-redux";
 
+
 const ProductScreen = () => {
   const { id: productId } = useParams();
   const dispatch = useDispatch();
