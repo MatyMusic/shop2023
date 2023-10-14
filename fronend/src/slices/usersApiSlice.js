@@ -60,7 +60,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["User"],
+      invalidatesTags: ["Users"],
     }),
   }),
 });

@@ -11,25 +11,37 @@ import {
 } from "react-bootstrap";
 
 import Rating from "../components/Rating";
-import { useGetProductDetailsQuery } from "../slices/productsApiSlice";
+import {
+  useGetProductDetailsQuery,
+  useCreateReviewMutation,
+} from "../slices/productsApiSlice";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
 import { useState } from "react";
 import { addToCart } from "../slices/cartSlice";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import Meta from "../components/Meta";
 
 const ProductScreen = () => {
   const { id: productId } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [qty, setQty] = useState(1);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
   const {
     data: product,
     isLoading,
+    refetch,
     error,
   } = useGetProductDetailsQuery(productId);
+
+  const [createReview, { isLoading: loadingProductReview }] =
+    useCreateReviewMutation();
+
+  const { userInfo } = useSelector((state) => state.auth);
 
   const addToCartHandler = () => {
     dispatch(
@@ -39,6 +51,24 @@ const ProductScreen = () => {
       })
     );
     navigate("/cart");
+  };
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      await createReview({
+        productId,
+        rating,
+        comment,
+      }).unwrap();
+      refetch();
+      toast.success("חוות דעת לקוח נשלחה בהצלחה");
+      setRating(0);
+      setComment("");
+    } catch (error) {
+      toast.error(error?.data?.message || error.error);
+    }
   };
 
   return (
@@ -54,7 +84,10 @@ const ProductScreen = () => {
           {error?.data?.message || error?.error}
         </Message>
       ) : (
+        //!
+
         <>
+          <Meta title={product.name} />
           <Row>
             <Col md={5}>
               <Image src={product.image} alt={product.name} fluid />
@@ -142,7 +175,74 @@ const ProductScreen = () => {
               </Card>
             </Col>
           </Row>
+          {/* //! reviews */}
+          <Row className="review">
+            <Col md={6}>
+              <h2>ביקורות</h2>
+              {product.reviews.length === 0 && <Message>אין ביקורות</Message>}
+              <ListGroup variant="flush">
+                {product.reviews.map((review) => (
+                  <ListGroup.Item key={review._id}>
+                    <strong> {review.name} </strong>
+                    <Rating value={review.rating} />
+
+                    <p> {review.createdAt.substring(0, 10)} </p>
+                    <p> {review.comment} </p>
+                  </ListGroup.Item>
+                ))}
+
+                <ListGroup.Item>
+                  <h2> ביקורת לקוח </h2>
+                  {loadingProductReview && <Loader />}
+
+                  {userInfo ? (
+                    <Form onSubmit={submitHandler}>
+                      <Form.Group className="my-2" controlId="rating">
+                        <Form.Label>ביקורת</Form.Label>
+                        <Form.Control
+                          as="select"
+                          required
+                          value={rating}
+                          onChange={(e) => setRating(e.target.value)}
+                        >
+                          <option value="">...בחר</option>
+                          <option value="1"> 1 - נחמד </option>
+                          <option value="2"> 2 - אהבתי </option>
+                          <option value="3"> 3 - מאוד יפה</option>
+                          <option value="4"> 4 - טוב מאוד </option>
+                          <option value="5"> 5 - מושלם </option>
+                        </Form.Control>
+                      </Form.Group>
+                      <Form.Group className="my-2" controlId="comment">
+                        <Form.Label>חוות דעת</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          row="3"
+                          required
+                          value={comment}
+                          onChange={(e) => setComment(e.target.value)}
+                        ></Form.Control>
+                      </Form.Group>
+                      <Button
+                        disabled={loadingProductReview}
+                        type="submit"
+                        variant="primary"
+                      >
+                        שלח
+                      </Button>
+                    </Form>
+                  ) : (
+                    <Message>
+                      בבקשה <Link to="/login">התחבר</Link> כדי לכתוב ביקורת
+                    </Message>
+                  )}
+                </ListGroup.Item>
+              </ListGroup>
+            </Col>
+          </Row>
         </>
+
+        //!
       )}
     </>
   );

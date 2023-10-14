@@ -32,7 +32,7 @@ const UserEditScreen = () => {
     e.preventDefault();
     try {
       await updateUser({ userId, name, email, isAdmin });
-      toast.success("user updated successfully");
+      toast.success("משתמש עודכן בהצלחה");
       refetch();
       navigate("/admin/userlist");
     } catch (err) {
@@ -60,7 +60,7 @@ const UserEditScreen = () => {
         {isLoading ? (
           <Loader />
         ) : error ? (
-          <Message variant="danger">{error}</Message>
+          <Message variant="danger">{error.data.message}</Message>
         ) : (
           <Form onSubmit={submitHandler}>
             {/*  */}
@@ -78,7 +78,7 @@ const UserEditScreen = () => {
               <Form.Label>דוא"ל </Form.Label>
               <Form.Control
                 type="email"
-                placeholder=' הכנס דוא"ל'
+                placeholder='הכנס דוא"ל'
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               ></Form.Control>
